@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summer RP | Rekrutacja Służba Więzienna</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050b14;
+            --panel-bg: rgba(13, 22, 38, 0.85);
+            --input-bg: rgba(20, 32, 54, 0.7);
+            --accent-blue: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --accent-gold: #eab308;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --error-color: #ef4444;
+            --success-color: #10b981;
+            --discord-color: #5865F2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-blue) transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: linear-gradient(rgba(5, 11, 20, 0.85), rgba(5, 11, 20, 0.95)), url('sluzbawieziena.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .character-left, .character-right {
+            position: fixed;
+            bottom: 0;
+            height: 80vh;
+            pointer-events: none;
+            z-index: 0;
+            filter: drop-shadow(0 0 30px rgba(0,0,0,0.8));
+            transition: all 0.5s ease;
+        }
+
+        .character-left {
+            left: 2%;
+            transform: translateX(0);
+        }
+
+        .character-right {
+            right: 2%;
+            transform: translateX(0);
+        }
+
+        .character-left img, .character-right img {
+            height: 100%;
+            object-fit: contain;
+        }
+
+        @media (max-width: 1400px) {
+            .character-left, .character-right { opacity: 0.4; filter: blur(2px); }
+        }
+        @media (max-width: 1000px) {
+            .character-left, .character-right { display: none; }
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 850px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 1), 0 0 40px rgba(59, 130, 246, 0.1);
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+        }
+
+        .app-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #1e3a8a, var(--accent-blue), var(--accent-gold), #1e3a8a);
+            background-size: 200% auto;
+            animation: gradientMove 3s linear infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .header {
+            padding: 40px 40px 20px;
+            text-align: center;
+        }
+
+        .header-subtitle {
+            color: var(--accent-gold);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            line-height: 1.6;
+        }
+
+        .discord-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(88, 101, 242, 0.15);
+            border: 1px solid var(--discord-color);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .discord-btn:hover {
+            background: var(--discord-color);
+            box-shadow: 0 0 15px rgba(88, 101, 242, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .progress-wrapper {
+            padding: 0 40px 30px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .progress-fill {
+            position: absolute;
+            top: 0; left: 0; height: 100%;
+            width: 25%;
+            background: linear-gradient(90deg, var(--accent-blue), #60a5fa);
+            border-radius: 10px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .step-indicators {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .step-indicators span.active { color: var(--accent-blue); text-shadow: 0 0 8px var(--accent-glow); }
+        .step-indicators span.completed { color: var(--success-color); }
+
+        .form-step {
+            display: none;
+            padding: 0 40px 40px;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) { .input-row { grid-template-columns: 1fr; gap: 0; } }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        label span { color: var(--error-color); }
+
+        .sub-label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            margin-top: -6px;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 14px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent-blue);
+            background: rgba(30, 41, 59, 0.9);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+
+        .error-field {
+            border-color: var(--error-color) !important;
+            background: rgba(239, 68, 68, 0.05) !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+        }
+
+        textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+
+        .custom-choice {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 12px;
+            cursor: pointer;
+            position: relative;
+            padding-left: 32px;
+            font-size: 14px;
+            color: #cbd5e1;
+            transition: color 0.2s;
+        }
+
+        .custom-choice:hover { color: #fff; }
+
+        .custom-choice input { position: absolute; opacity: 0; cursor: pointer; }
+
+        .indicator {
+            position: absolute;
+            top: 0; left: 0;
+            height: 20px; width: 20px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .custom-choice input:checked ~ .indicator {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .indicator:after {
+            content: ""; position: absolute; display: none;
+        }
+
+        .custom-choice input:checked ~ .indicator:after { display: block; }
+
+        .custom-choice .indicator:after {
+            left: 6px; top: 2px; width: 5px; height: 10px;
+            border: solid white; border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .custom-choice.radio .indicator { border-radius: 50%; }
+        .custom-choice.radio .indicator:after {
+            top: 6px; left: 6px; width: 6px; height: 6px;
+            border-radius: 50%; background: white; border-width: 0;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-prev {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-prev:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+        .btn-next, .btn-submit {
+            background: linear-gradient(135deg, var(--accent-blue), #1d4ed8);
+            color: #fff;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .btn-next:hover, .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+        }
+
+        .btn-submit { background: linear-gradient(135deg, var(--success-color), #059669); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
+        .btn-submit:hover { box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6); }
+        .btn-submit:disabled { filter: grayscale(1); cursor: not-allowed; transform: none; }
+
+        .cooldown-banner {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error-color);
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 20px 40px;
+            text-align: center;
+            display: none;
+        }
+
+        .cooldown-banner.active { display: block; }
+
+        .cooldown-banner .time-left {
+            color: var(--error-color);
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        .cooldown-banner .message {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            z-index: 1000;
+        }
+
+        .overlay.active { opacity: 1; pointer-events: all; }
+
+        .modal {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            padding: 40px; border-radius: 16px;
+            text-align: center; max-width: 400px; width: 90%;
+            transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+        }
+
+        .overlay.active .modal { transform: scale(1); }
+
+        .modal-icon { font-size: 60px; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .modal h2 { margin-bottom: 15px; font-size: 24px; font-weight: 800; }
+        .modal p { color: var(--text-muted); line-height: 1.5; margin-bottom: 25px; font-size: 14px; }
+        .modal-btn { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid var(--border-color); padding: 12px 35px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; text-transform: uppercase; font-size: 13px; }
+        .modal-btn:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="character-left">
+        <img src="https://media.discordapp.net/attachments/1396419876989435904/1515725349579657286/ludzik1.png?ex=6a300cbc&is=6a2ebb3c&hm=313d37a4646140ed580df266bdcee3f3337049fa300cabd70182c8c8eb206457&=&format=webp&quality=lossless&width=422&height=844" alt="Strażnik SW 1">
+    </div>
+    
+    <div class="character-right">
+        <img src="https://media.discordapp.net/attachments/1396419876989435904/1515725349315674162/ludzik2.png?ex=6a300cbc&is=6a2ebb3c&hm=0facc2cb1030bd3054d2a274337c231aaf4e40d4aecebaff408534111cefc104&=&format=webp&quality=lossless&width=422&height=844" alt="Strażnik SW 2">
+    </div>
+
+    <div class="app-container">
+        <div class="header">
+            <span class="header-subtitle">Summer RP</span>
+            <h1>Zarząd Służby Więziennej</h1>
+            <p>Zarząd Służby Więziennej otwiera rekrutację. Wypełnij rzetelnie poniższe sekcje, postępy zapisywane są na bieżąco.</p>
+            
+            <a href="https://discord.gg/cRJxKJnXCt" target="_blank" class="discord-btn">
+                <svg width="20" height="20" viewBox="0 0 127.14 96.36" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a67.55,67.55,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.31,60,73.31,53s5-12.74,11.43-12.74S96.2,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+                </svg>
+                DOŁĄCZ NA DISCORD SUMMER RP
+            </a>
+        </div>
+
+        <div class="cooldown-banner" id="cooldownBanner">
+            <div class="message">⚠️ Musisz czekać przed wysłaniem kolejnego podania</div>
+            <div class="time-left" id="timeLeft">00:00:00</div>
+        </div>
+
+        <div class="progress-wrapper">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="step-indicators">
+                <span id="ind1" class="active">Krok 1: OOC</span>
+                <span id="ind2">Krok 2: IC</span>
+                <span id="ind3">Krok 3: SW Pytania</span>
+                <span id="ind4">Krok 4: Oświadczenia</span>
+            </div>
+        </div>
+
+        <form id="secureForm" novalidate>
+            <div class="form-step active" id="step1">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Imię / Nick OOC <span>*</span></label>
+                        <input type="text" id="oocName" placeholder="Jak się nazywasz?" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Wiek <span>*</span></label>
+                        <input type="number" id="oocAge" min="13" max="99" placeholder="Twój prawdziwy wiek" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Nick discord <span>*</span></label>
+                    <input type="text" id="oocIdentifiers" placeholder="Np. nick02" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Ilość godzin RP <span>*</span></label>
+                    <input type="text" id="oocHours" placeholder="Godziny spędzone w grze ER:LC" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Sprzęt i mikrofon <span>*</span></label>
+                    <label class="custom-choice radio">Tak, mam sprawny sprzęt i mikrofon bez szumów.
+                        <input type="radio" name="oocHardware" value="Sprawny sprzęt" checked required>
+                        <span class="indicator"></span>
+                    </label>
+                    <label class="custom-choice radio">Mam problemy techniczne (mikrofon/łączność).
+                        <input type="radio" name="oocHardware" value="Problemy techniczne">
+                        <span class="indicator"></span>
+                    </label>
+                </div>
+
+                <div class="input-group">
+                    <label>Doświadczenie w strukturach mundurowych <span>*</span></label>
+                    <span class="sub-label">Opisz serwery RP, frakcje oraz zajmowane stopnie/pozycje.</span>
+                    <textarea id="oocExperience" placeholder="Moje doświadczenie: na serwerze ... byłem w ... jako..., na serwerze ..." required></textarea>
+                </div>
+
+                <div class="btn-group" style="justify-content: flex-end;">
+                    <button type="button" class="btn btn-next" onclick="nextStep(1)">Przejdź do części IC ➔</button>
+                </div>
+            </div>
+
+            <div class="form-step" id="step2">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Imię i Nazwisko Postaci <span>*</span></label>
+                        <input type="text" id="icName" placeholder="Np. Jan Kowalski" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Wiek i Data Urodzenia <span>*</span></label>
+                        <input type="text" id="icAge" placeholder="Np. 32 (DD.MM.RRRR)" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Wykształcenie Postaci <span>*</span></label>
+                    <select id="icEducation" required>
+                        <option value="" disabled selected>Wybierz z listy...</option>
+                        <option value="Średnie">Średnie</option>
+                        <option value="Wyższe (Prawo / Kryminologia)">Wyższe (Prawo / Kryminologia)</option>
+                        <option value="Wojskowe / Policyjne">Akademia Wojskowa / Policyjna</option>
+                        <option value="Inne">Inne</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Przeszłość Kryminalna <span>*</span></label>
+                    <label class="custom-choice radio">Kartoteka w pełni czysta - żadnych wyroków.
+                        <input type="radio" name="icCriminal" value="Czysta" checked onchange="document.getElementById('crimeDetails').style.display='none'" required>
+                        <span class="indicator"></span>
+                    </label>
+                    <label class="custom-choice radio">Postać była w przeszłości karana.
+                        <input type="radio" name="icCriminal" value="Karany" onchange="document.getElementById('crimeDetails').style.display='block'">
+                        <span class="indicator"></span>
+                    </label>
+                </div>
+
+                <div class="input-group" id="crimeDetails" style="display: none;">
+                    <label>Opis wyroków</label>
+                    <input type="text" id="icCriminalDesc" placeholder="Za co postać odbywała wyrok? Kiedy?">
+                </div>
+
+                <div class="input-group">
+                    <label>List Motywacyjny <span>*</span></label>
+                    <span class="sub-label">Napisz pismo uzasadniające, dlaczego aplikujesz do służby.</span>
+                    <textarea id="icLetter" placeholder="Aplikuję na zarząd frakcji ponieważ..." required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Biografia Postaci (Min. 5 zdań) <span>*</span></label>
+                    <textarea id="icBio" placeholder="Krótka historia postaci: gdzie urodził/a się, rodzina, edukacja, ważne wydarzenia w życiu..." required></textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-prev" onclick="prevStep(2)">🡠 Wstecz</button>
+                    <button type="button" class="btn btn-next" onclick="nextStep(2)">Przejdź do Pytań SW ➔</button>
+                </div>
+            </div>
+
+            <div class="form-step" id="step3">
+                <div class="input-group">
+                    <label>Czy znałeś/aś regulamin Służby Więziennej przed aplikacją? <span>*</span></label>
+                    <label class="custom-choice radio">Tak, znałem/am regulamin SW przed wypełnieniem podania.
+                        <input type="radio" name="swRegulamin" value="Tak" checked required>
+                        <span class="indicator"></span>
+                    </label>
+                    <label class="custom-choice radio">Nie, poznałem/am regulamin dopiero podczas rekrutacji.
+                        <input type="radio" name="swRegulamin" value="Nie">
+                        <span class="indicator"></span>
+                    </label>
+                </div>
+
+                <div class="input-group">
+                    <label>Jakie są główne zadania Służby Więziennej w Summer RP? <span>*</span></label>
+                    <textarea id="swFunction" placeholder="Opisz zadania SW: kontrola osadzonych, ochrona więzienia, itp..." required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Czy byłeś/aś wcześniej w SW na innym serwerze RP? <span>*</span></label>
+                    <label class="custom-choice radio">Nie, nigdy nie byłem/am w Służbie Więziennej.
+                        <input type="radio" name="swPrevious" value="Nie" checked onchange="document.getElementById('swPreviousDetails').style.display='none'" required>
+                        <span class="indicator"></span>
+                    </label>
+                    <label class="custom-choice radio">Tak, byłem/am wcześniej w SW.
+                        <input type="radio" name="swPrevious" value="Tak" onchange="document.getElementById('swPreviousDetails').style.display='block'">
+                        <span class="indicator"></span>
+                    </label>
+                </div>
+
+                <div class="input-group" id="swPreviousDetails" style="display: none;">
+                    <label>Gdzie i na jakim stopniu byłeś/aś?</label>
+                    <input type="text" id="swPreviousDetailsInput" placeholder="Serwer RP, frakcja SW, stopień/pozycja">
+                </div>
+
+                <div class="input-group">
+                    <label>Jaką odpowiedzialność masz za osadzonych jako strażnik SW? <span>*</span></label>
+                    <textarea id="swResponsibility" placeholder="Opisz swoją odpowiedzialność: bezpieczeństwo, kontrola, itp..." required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Jakbyś reagował/a na próbę buntuanu lub ataku na więzienie? <span>*</span></label>
+                    <textarea id="swRiot" placeholder="Opisz swoje działania: alarm, obrona, koordynacja z PD..." required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Czy jesteś świadomy/a konsekwencji i kar za niepodanie się do służby? <span>*</span></label>
+                    <label class="custom-choice radio">Tak, jestem świadomy/a kar (FCK, CK, usunięcie).
+                        <input type="radio" name="swPenalties" value="Tak" checked required>
+                        <span class="indicator"></span>
+                    </label>
+                    <label class="custom-choice radio">Nie, nie jestem świadomy/a konsekwencji.
+                        <input type="radio" name="swPenalties" value="Nie">
+                        <span class="indicator"></span>
+                    </label>
+                </div>
+
+                <div class="input-group">
+                    <label>Czy jesteś gotowy/a na pracę w systemie zmianowym (nocne/dzienne)? <span>*</span></label>
+                    <label class="custom-choice radio">Tak, jestem gotowy/a na pracę zmianową.
+                        <input type="radio" name="swShift" value="Tak" checked required>
+                        <span class="indicator"></span>
+                    </label>
+                    <label class="custom-choice radio">Nie, mam problemy z pracą zmianową.
+                        <input type="radio" name="swShift" value="Nie">
+                        <span class="indicator"></span>
+                    </label>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-prev" onclick="prevStep(3)">🡠 Wstecz</button>
+                    <button type="button" class="btn btn-next" onclick="nextStep(3)">Przejdź do Oświadczeń ➔</button>
+                </div>
+            </div>
+
+            <div class="form-step" id="step4">
+                <div class="input-group">
+                    <label>Regulaminy i zgody <span>*</span></label>
+                    <span class="sub-label">Aby wysłać podanie, musisz zaakceptować poniższe warunki.</span>
+                    
+                    <label class="custom-choice">
+                        Akceptuję w pełni regulamin serwera Summer RP oraz regulamin Służby Więziennej.
+                        <input type="checkbox" id="agree1" required>
+                        <span class="indicator"></span>
+                    </label>
+
+                    <label class="custom-choice">
+                        Rozumiem, że przedostanie do SW wymaga przejścia wszystkich etapów rekrutacji i zdania egzaminu.
+                        <input type="checkbox" id="agree3" required>
+                        <span class="indicator"></span>
+                    </label>
+
+                    <label class="custom-choice">
+                        Wiem, że po wysłaniu podania muszę czekać 24 godziny przed kolejnym wypełnieniem.
+                        <input type="checkbox" id="agree4" required>
+                        <span class="indicator"></span>
+                    </label>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-prev" onclick="prevStep(4)">🡠 Wstecz</button>
+                    <button type="submit" class="btn btn-submit" id="btnSubmit">Wyślij Podanie ✓</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-icon" id="modalIcon">✅</div>
+            <h2 id="modalTitle">Sukces!</h2>
+            <p id="modalMessage">Podanie wysłane pomyślnie.</p>
+            <button class="modal-btn" onclick="closeModal()">Rozumiem</button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // Tralalero tralala
+        // =========================================================================
+
+        const BASE64_WEBHOOK_HERE = "aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTQxMzg5MDE2NDQ1OTE4MDAzMi8tYnJfTnVPakZwc1I0QmoyeGF0bTVoQzhKdTFieWZNSnp1LW1oWUNkaWhlTjZQOEQ4eGRhWGhnbGx5VmNWQkhHUWV1cw==";
+
+        function getWebhookUrl() {
+            try {
+                const decoded = atob(BASE64_WEBHOOK_HERE);
+                if (decoded && decoded.includes('discord.com/api/webhooks') && decoded.length > 30) {
+                    return decoded;
+                }
+            } catch(e) {
+                console.error('Błąd dekodowania webhooka:', e);
+            }
+            return null;
+        }
+
+        const COOLDOWN_HOURS = 24;
+        let currentStep = 1;
+
+        function checkCooldown() {
+            const lastSubmission = localStorage.getItem('summer_rp_sw_last_submission');
+            const cooldownBanner = document.getElementById('cooldownBanner');
+            
+            if (lastSubmission) {
+                const lastTime = new Date(lastSubmission).getTime();
+                const now = Date.now();
+                const cooldownTime = lastTime + (COOLDOWN_HOURS * 60 * 60 * 1000);
+                
+                if (now < cooldownTime) {
+                    cooldownBanner.classList.add('active');
+                    document.getElementById('btnSubmit').disabled = true;
+                    document.getElementById('btnSubmit').innerText = 'Cooldown aktywny';
+                    updateCooldownDisplay(cooldownTime);
+                    return false;
+                }
+            }
+            
+            cooldownBanner.classList.remove('active');
+            document.getElementById('btnSubmit').disabled = false;
+            document.getElementById('btnSubmit').innerText = 'Wyślij Podanie ✓';
+            return true;
+        }
+
+        function updateCooldownDisplay(cooldownTime) {
+            const timeLeftEl = document.getElementById('timeLeft');
+            
+            const interval = setInterval(() => {
+                const now = Date.now();
+                const diff = cooldownTime - now;
+                
+                if (diff <= 0) {
+                    clearInterval(interval);
+                    checkCooldown();
+                    return;
+                }
+                
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                timeLeftEl.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function updateProgress() {
+            document.getElementById('progressFill').style.width = (currentStep * 25) + '%';
+            
+            for(let i=1; i<=4; i++) {
+                const ind = document.getElementById('ind'+i);
+                ind.className = '';
+                if(i < currentStep) ind.className = 'completed';
+                if(i === currentStep) ind.className = 'active';
+            }
+        }
+
+        function validateStep(step) {
+            let isValid = true;
+            let fieldsToCheck = [];
+
+            if (step === 1) {
+                fieldsToCheck = ['oocName', 'oocAge', 'oocIdentifiers', 'oocHours', 'oocExperience'];
+            } else if (step === 2) {
+                fieldsToCheck = ['icName', 'icAge', 'icEducation', 'icLetter', 'icBio'];
+            } else if (step === 3) {
+                fieldsToCheck = ['swFunction', 'swResponsibility', 'swRiot'];
+            }
+
+            fieldsToCheck.forEach(id => {
+                const element = document.getElementById(id);
+                if (!element) return;
+                
+                element.classList.remove('error-field');
+                
+                if (!element.value.trim()) {
+                    element.classList.add('error-field');
+                    isValid = false;
+                }
+
+                element.addEventListener('input', function() {
+                    if(this.value.trim() !== '') {
+                        this.classList.remove('error-field');
+                    }
+                }, { once: true });
+            });
+
+            return isValid;
+        }
+
+        function nextStep(step) {
+            if (!validateStep(step)) {
+                showModal('⚠️', 'Puste pola', 'Musisz uzupełnić wszystkie pola zaznaczone na czerwono, zanim przejdziesz dalej!', true);
+                return;
+            }
+
+            document.getElementById('step' + currentStep).classList.remove('active');
+            currentStep++;
+            document.getElementById('step' + currentStep).classList.add('active');
+            updateProgress();
+        }
+
+        function prevStep(step) {
+            document.getElementById('step' + currentStep).classList.remove('active');
+            currentStep--;
+            document.getElementById('step' + currentStep).classList.add('active');
+            updateProgress();
+        }
+
+        function showModal(icon, title, message, isError = false) {
+            document.getElementById('modalIcon').innerText = icon;
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalTitle').style.color = isError ? '#ef4444' : '#f1f5f9';
+            document.getElementById('modalMessage').innerText = message;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        window.addEventListener('load', checkCooldown);
+
+        document.getElementById('secureForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if(!document.getElementById('agree1').checked || !document.getElementById('agree2').checked || !document.getElementById('agree3').checked || !document.getElementById('agree4').checked) {
+                showModal('🛑', 'Brak Zgód', 'Musisz zaakceptować wszystkie 4 oświadczenia w Kroku 4, aby złożyć podanie.', true);
+                return;
+            }
+
+            const webhookUrl = getWebhookUrl();
+            
+            if (!webhookUrl) {
+                showModal('⚠️', 'Błąd Konfiguracji', 'Administrator nie skonfigurował webhooka (BASE64_WEBHOOK_HERE jest pusty lub nieprawidłowy). Skontaktuj się z administracją.', true);
+                return;
+            }
+
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.innerText = 'Wysyłanie...';
+
+            const criminalValue = document.querySelector('input[name="icCriminal"]:checked').value;
+            const criminalDesc = document.getElementById('icCriminalDesc').value || 'Brak';
+            const swPreviousValue = document.querySelector('input[name="swPrevious"]:checked').value;
+            const swPreviousDetails = document.getElementById('swPreviousDetailsInput').value || 'Nie byłem/am wcześniej';
+            const swShiftValue = document.querySelector('input[name="swShift"]:checked').value;
+
+            const payload = {
+    "username": "Summer RP - Rekrutacja SW",
+    "avatar_url": "https://media.discordapp.net/attachments/1396419876989435904/1515099231205982339/summer_rp_2_edycja_logo.png?ex=6a2fbfdd&is=6a2e6e5d&hm=83e2566057a9d05294337c72709838f2c388f0926eff1f38ac397ac0227f6785&=&format=webp&quality=lossless",
+    "embeds": [
+        {
+            "title": "📋 System podań: Nowa Aplikacja SW",
+            "color": 3447003, // Elegancki niebieski
+            "author": {
+                "name": "Summer RP | 2 Edycja",
+                "icon_url": "https://media.discordapp.net/attachments/1396419876989435904/1515099231205982339/summer_rp_2_edycja_logo.png?ex=6a2fbfdd&is=6a2e6e5d&hm=83e2566057a9d05294337c72709838f2c388f0926eff1f38ac397ac0227f6785&=&format=webp&quality=lossless"
+            },
+            "thumbnail": {
+                "url": "https://media.discordapp.net/attachments/1396419876989435904/1515099231205982339/summer_rp_2_edycja_logo.png?ex=6a2fbfdd&is=6a2e6e5d&hm=83e2566057a9d05294337c72709838f2c388f0926eff1f38ac397ac0227f6785&=&format=webp&quality=lossless"
+            },
+            "fields": [
+                { "name": "👤 OOC Nick", "value": "`" + document.getElementById('oocName').value + "`", "inline": true },
+                { "name": "⏳ Wiek", "value": "`" + document.getElementById('oocAge').value + " lat`", "inline": true },
+                { "name": "🔗 Discord", "value": "`" + document.getElementById('oocIdentifiers').value + "`", "inline": true },
+                { "name": "🎮 Godziny RP", "value": document.getElementById('oocHours').value, "inline": true },
+                { "name": "🛠️ Sprzęt", "value": document.querySelector('input[name="oocHardware"]:checked').value, "inline": true },
+                { "name": "📚 Doświadczenie RP", "value": document.getElementById('oocExperience').value, "inline": false }
+            ]
+        },
+        {
+            "title": "🪪 KARTOTEKA IC: Dane Postaci",
+            "color": 15844367, // Pomarańczowy/Złoty
+            "fields": [
+                { "name": "📛 Imię i Nazwisko", "value": "**" + document.getElementById('icName').value + "**", "inline": true },
+                { "name": "📅 Wiek IC", "value": document.getElementById('icAge').value, "inline": true },
+                { "name": "🎓 Wykształcenie", "value": document.getElementById('icEducation').value, "inline": true },
+                { "name": "⚖️ Kartoteka", "value": criminalValue, "inline": true },
+                { "name": "📝 Opis wyroków", "value": criminalDesc || "Brak wpisów", "inline": false },
+                { "name": "📖 Biografia Postaci", "value": document.getElementById('icBio').value || "Brak biografii", "inline": false },
+                { "name": "✉️ List Motywacyjny", "value": document.getElementById('icLetter').value || "Brak listu", "inline": false }
+            ]
+        },
+        {
+            "title": "🔒 Pytania Rekrutacyjne SW",
+            "color": 10038562, // Ciemna czerwień (motyw więzienny/ochrony)
+            "fields": [
+                { "name": "📖 Regulamin SW", "value": document.querySelector('input[name="swRegulamin"]:checked').value, "inline": true },
+                { "name": "⚠️ Świadomość kar", "value": document.querySelector('input[name="swPenalties"]:checked').value, "inline": true },
+                { "name": "🕐 Praca zmianowa", "value": swShiftValue, "inline": true },
+                { "name": "🔄 Doświadczenie SW", "value": swPreviousValue, "inline": true },
+                { "name": "📍 Gdzie wcześniej", "value": swPreviousDetails || "Nie dotyczy", "inline": true },
+                { "name": "🏢 Zadania SW", "value": document.getElementById('swFunction').value, "inline": false },
+                { "name": "🛡️ Odpowiedzialność", "value": document.getElementById('swResponsibility').value, "inline": false },
+                { "name": "🚨 Bunt/Atak", "value": document.getElementById('swRiot').value, "inline": false }
+            ],
+            "footer": { 
+                "text": "Wysłano z formularza rekrutacyjnego",
+                "icon_url": "https://media.discordapp.net/attachments/1396419876989435904/1515099231205982339/summer_rp_2_edycja_logo.png?ex=6a2fbfdd&is=6a2e6e5d&hm=83e2566057a9d05294337c72709838f2c388f0926eff1f38ac397ac0227f6785&=&format=webp&quality=lossless"
+            },
+            "timestamp": new Date().toISOString() // Automatycznie wygeneruje ładną datę w stopce Discorda
+        }
+    ]
+};
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => {
+                if (res.ok) {
+                    const now = new Date().toISOString();
+                    localStorage.setItem('summer_rp_sw_last_submission', now);
+                    
+                    showModal('✅', 'Podanie Wysłane', `Twoje dokumenty trafiły na serwer Discord zarządu.\n\n⏰ Możesz wysłać kolejne podanie po ${COOLDOWN_HOURS} godzinach.`);
+                    document.getElementById('secureForm').reset();
+                    
+                    setTimeout(() => {
+                        closeModal();
+                        prevStep(4);
+                        prevStep(3);
+                        prevStep(2);
+                        checkCooldown();
+                    }, 5000);
+                } else {
+                    showModal('❌', 'Błąd', 'Błąd połączenia z serwerem Discord (' + res.status + '). Spróbuj później.', true);
+                }
+            })
+            .catch(() => {
+                showModal('📡', 'Błąd Sieci', 'Brak połączenia z internetem. Sprawdź połączenie i spróbuj ponownie.', true);
+            })
+            .finally(() => {
+                if (checkCooldown()) {
+                    btn.disabled = false;
+                    btn.innerText = 'Wyślij Podanie ✓';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
